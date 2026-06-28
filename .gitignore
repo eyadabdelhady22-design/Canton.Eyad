@@ -1,0 +1,11 @@
+# Never commit private key material or live tokens
+state/
+.token.json
+*.priv
+.env
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc

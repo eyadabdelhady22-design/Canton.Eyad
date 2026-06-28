@@ -1,0 +1,28 @@
+{
+  "captured_at": "2026-06-28T19:58:31.259343Z",
+  "party_id": "eyad::1220e0b96deef56097f261037f8628622e481712cd7379214e72bee2ab1a209258ae",
+  "balance_by_instrument": {
+    "Amulet": 18.0
+  },
+  "holdings": [
+    {
+      "contractId": "00e4baa5d5de88bd3474b30887b73963e8d3cdf7a71ca71eca2875640a79c8ceefca121220eda273bf65bc2c5bafbc353cf470270a68351501f4a7842a9ac4a79e8ea17621",
+      "amount": "18.0000000000",
+      "instrument": "Amulet",
+      "lock": null
+    }
+  ],
+  "transfer_preapprovals": [
+    {
+      "contractId": "003100ac85f231335edb287cd0c2e5050eee210749ac626cf711f7e6427a428639ca1212207decd983b021cd48b40c6c7f57d2b277d446f62dea288a2b6de492a5e55af854",
+      "args": {
+        "dso": "DSO::1220be58c29e65de40bf273be1dc2b266d43a9a002ea5b18955aeef7aac881bb471a",
+        "receiver": "eyad::1220e0b96deef56097f261037f8628622e481712cd7379214e72bee2ab1a209258ae",
+        "provider": "cantor8-digik-1::12204e94c0e449c0efcd270dd1e68259c36471cebef132e5c7dfc2750fe8c9eed77f",
+        "validFrom": "2026-06-28T19:49:39.147806Z",
+        "lastRenewedAt": "2026-06-28T19:49:39.147806Z",
+        "expiresAt": "2026-09-26T19:49:38.443735Z"
+      }
+    }
+  ]
+}

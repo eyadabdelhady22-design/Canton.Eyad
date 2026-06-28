@@ -1,0 +1,72 @@
+{
+  "name": "eyad",
+  "pub_hex": "c83e2e2e0271471651f9cd60e5b6ee344d8d2ca0b1b14bb86b52d547d81456b8",
+  "party_hint": "eyad",
+  "party_id": "eyad::1220e0b96deef56097f261037f8628622e481712cd7379214e72bee2ab1a209258ae",
+  "topology_txs": [
+    {
+      "topology_tx": "CowBCAEQARqFAQqCAQpEMTIyMGUwYjk2ZGVlZjU2MDk3ZjI2MTAzN2Y4NjI4NjIyZTQ4MTcxMmNkNzM3OTIxNGU3MmJlZTJhYjFhMjA5MjU4YWUSOBAEGiwwKjAFBgMrZXADIQDIPi4uAnFHFlH5zWDltu40TY0soLGxS7hrUtVH2BRWuCoEAQMEBTABIgAQHg==",
+      "hash": "1220ecf204dc0c800ea89e1414073fb1fed862a6d3fc6a95a39c405a2e5d1d069227"
+    },
+    {
+      "topology_tx": "CrMBCAEQARqsAUqpAQpKZXlhZDo6MTIyMGUwYjk2ZGVlZjU2MDk3ZjI2MTAzN2Y4NjI4NjIyZTQ4MTcxMmNkNzM3OTIxNGU3MmJlZTJhYjFhMjA5MjU4YWUQARpZClVjYW50b3I4LWRpZ2lrLTE6OjEyMjA0ZTk0YzBlNDQ5YzBlZmNkMjcwZGQxZTY4MjU5YzM2NDcxY2ViZWYxMzJlNWM3ZGZjMjc1MGZlOGM5ZWVkNzdmEAIQHg==",
+      "hash": "1220cba25599b8038945f856e2034c30180d648420c4e566b84c14b197ca2b24f952"
+    },
+    {
+      "topology_tx": "CpMBCAEQARqMAYIBiAEKSmV5YWQ6OjEyMjBlMGI5NmRlZWY1NjA5N2YyNjEwMzdmODYyODYyMmU0ODE3MTJjZDczNzkyMTRlNzJiZWUyYWIxYTIwOTI1OGFlGAEiOBAEGiwwKjAFBgMrZXADIQDIPi4uAnFHFlH5zWDltu40TY0soLGxS7hrUtVH2BRWuCoEAQMEBTABEB4=",
+      "hash": "122086d2d6f2020f0b416db857d0828ce3fb1a7753eae9044ebbe500b12d5ee52dd3"
+    }
+  ],
+  "allocated": true,
+  "preapproval_cid": "003100ac85f231335edb287cd0c2e5050eee210749ac626cf711f7e6427a428639ca1212207decd983b021cd48b40c6c7f57d2b277d446f62dea288a2b6de492a5e55af854",
+  "preapproval_update": {
+    "updateId": "12203e771aafbaaad9ba097ccef80a613d0bd8acb3d23779d0cda965298ccc71c4cc",
+    "completionOffset": 2182723
+  },
+  "transfers_out": [
+    {
+      "from": "eyad",
+      "from_party": "eyad::1220e0b96deef56097f261037f8628622e481712cd7379214e72bee2ab1a209258ae",
+      "to": "taha",
+      "to_party": "taha::12208869ea8833eac587d55e5cbf32a46664ef152cc0ecd35a64dc5fd5a90d0d0965",
+      "amount": "12.0000000000",
+      "result": {
+        "updateId": "122025afc353a282cc05cd9e2f4388d144fb9b74a9dc222ebd934a17d53c161d6965",
+        "completionOffset": 2182750
+      },
+      "factoryId": "009f00e5bf00640118d849080aaf22bc963a8458d322585cebf1119cb7bf37a955ca11122065b775fb8a4199904ed32fa9277fd9c0e82bb82319a7151249df124182072381",
+      "transferKind": "direct",
+      "inputHoldingCids": [
+        "0023f067978504b824d9c808a901a189c49e4282d695965c9a7434a3b2943fb147ca121220f4d0a19982ebdbaabb1cee556eb7ff5d5115ba8e4f3e956649191442dfe23a7a"
+      ],
+      "at": "2026-06-28T19:50:24.194971Z"
+    },
+    {
+      "from": "eyad",
+      "from_party": "eyad::1220e0b96deef56097f261037f8628622e481712cd7379214e72bee2ab1a209258ae",
+      "to": "taha",
+      "to_party": "taha::12208869ea8833eac587d55e5cbf32a46664ef152cc0ecd35a64dc5fd5a90d0d0965",
+      "amount": "10.0000000000",
+      "result": {
+        "updateId": "12206b2643fb22cd0024211c036bc70de9c629ef1cd73c9cd3eb2a2790d1cac51515",
+        "completionOffset": 2182908
+      },
+      "factoryId": "009f00e5bf00640118d849080aaf22bc963a8458d322585cebf1119cb7bf37a955ca11122065b775fb8a4199904ed32fa9277fd9c0e82bb82319a7151249df124182072381",
+      "transferKind": "direct",
+      "inputHoldingCids": [
+        "003acb3f53b644e798de8d17c417088ccff4be7326d824ce4b068b5161d47a1e4bca12122096819dffa1277c159b964576940519d871fc71fa52ec1931351b1adab07a5f9a"
+      ],
+      "at": "2026-06-28T19:57:41.178810Z"
+    }
+  ],
+  "funded_by": {
+    "note": "eyad received Canton Coin via an on-ledger Token Standard transfer from already-funded party ayaan. This funds eyad (lab Step 3) and demonstrates a Token Standard transfer where eyad is the receiver.",
+    "from": "ayaan",
+    "from_party": "ayaan::122089701248fdb863092188c3af86ef450ea1487974496d6fa8494d6c3361cf3a5d",
+    "amount": "40.0000000000",
+    "updateId": "1220055c21d2a63c0725eff71138c17898a1259acd6f3df6e6408db8d3cc9dcd362f",
+    "completionOffset": 2182747,
+    "transferKind": "direct"
+  },
+  "_note": "Sanitized: private key (priv_hex) intentionally removed. All other fields are public on-ledger data."
+}
