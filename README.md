@@ -6,7 +6,8 @@ hosted validator on DevNet.
 
 Every step in the lab spec is implemented in [`cn.py`](cn.py) and is fully
 reproducible. The on-ledger results captured during the real run are recorded
-below and in [`evidence/`](evidence/).
+below and in [`evidence/`](evidence/), and any `updateId` quoted here can be
+fetched straight from the ledger — see [How to verify](#how-to-verify-on-ledger).
 
 > **Security note.** This repo contains **no private keys and no client
 > secret.** `eyad`'s Ed25519 private key never leaves the local `state/`
@@ -50,7 +51,7 @@ Per the lab spec, allocation uses the validator Admin API topology endpoints
 python cn.py allocate eyad
 ```
 
-**Result:** party `eyad::1220e0b96d…209258ae` allocated. The three signed
+**Result:** party `eyad::1220e0b96deef5…209258ae` allocated. The three signed
 topology transactions are recorded in
 [`evidence/eyad.party.json`](evidence/eyad.party.json) (`topology_txs`).
 
@@ -75,18 +76,21 @@ python cn.py preapproval eyad
 | Create update ID | `12203e771aafbaaad9ba097ccef80a613d0bd8acb3d23779d0cda965298ccc71c4cc` |
 | Valid from | `2026-06-28T19:49:39Z` |
 | Expires | `2026-09-26T19:49:38Z` |
-| Provider | `cantor8-digik-1::12204e94…d77f` |
+| Provider | `cantor8-digik-1::12204e94c0e449c0efcd270dd1e68259c36471cebef132e5c7dfc2750fe8c9eed77f` |
 
 ### Step 3 — Receive Canton Coins
 
-`eyad` received Canton Coin (Amulet) via an **on-ledger Token Standard
-transfer** from the already-funded party `ayaan` (the hackathon team had
-previously funded `ayaan`/`taha`). This funds `eyad` and simultaneously
-demonstrates a Token Standard transfer in which `eyad` is the **receiver**.
+> **Known deviation from the spec.** The lab's Step 3 says "get Canton Coins
+> from the team." `eyad` was instead funded by an **on-ledger Token Standard
+> transfer of 40 CC from the already-funded party `ayaan`**. The end state is
+> identical (eyad holds real Canton Coin), and this doubles as a demonstration
+> of a Token Standard transfer in which `eyad` is the **receiver**. If you
+> prefer faucet funding, share eyad's PartyId with the team instead — the rest
+> of the flow is unchanged.
 
 | Field | Value |
 |---|---|
-| From | `ayaan::1220897012…3361cf3a5d` |
+| From | `ayaan::122089701248…3361cf3a5d` |
 | Amount received | **40.0000000000 CC** |
 | Update ID | `1220055c21d2a63c0725eff71138c17898a1259acd6f3df6e6408db8d3cc9dcd362f` |
 | Transfer kind | `direct` (one-step, `eyad` pre-approved) |
@@ -101,16 +105,24 @@ Balance is computed from the UTXO-style `Holding` contracts (interface
 python cn.py acs eyad
 ```
 
-**Result (live snapshot — [`evidence/eyad.acs-snapshot.json`](evidence/eyad.acs-snapshot.json)):**
+**Current balance (live snapshot — [`evidence/eyad.acs-snapshot.json`](evidence/eyad.acs-snapshot.json)):**
 
 | Holding contract ID | Amount | Instrument |
 |---|---|---|
-| `003acb3f53b6…b07a5f9a` | 28.0000000000 | Amulet |
-| **Total** | **28.0000000000 CC** | |
+| `00e4baa5…ea17621` | 18.0000000000 | Amulet |
+| **Total** | **18.0000000000 CC** | |
 
-(Received +40 from `ayaan`, sent −12 to `taha` → net 28 CC.)
+Balance is a point-in-time value; it reflects every transfer to date:
 
-### Step 5 (★) — Token Standard transfer: `eyad → taha`
+```
+ + 40  received from ayaan  (update 1220055c21d2…cd362f)
+ - 12  sent to taha         (update 122025afc353…1d6965)
+ - 10  sent to taha         (update 12206b2643fb…c51515)
+ ----
+   18  CC
+```
+
+### Step 5 (★) — Token Standard transfers (`eyad` as sender)
 
 A Canton **Token Standard** transfer with `eyad` as the **sender**. The
 transfer factory is fetched from the registry via the validator's scan-proxy
@@ -118,32 +130,44 @@ transfer factory is fetched from the registry via the validator's scan-proxy
 returns the `factoryId` plus a choice context (context data + disclosed
 contracts). `TransferFactory_Transfer` is then exercised with that context
 spliced in and the disclosed contracts forwarded, submitted via interactive
-(external) signing. Because the receiver `taha` has a pre-approval, the
-transfer settles in **one step** (`transferKind = direct`).
+(external) signing. Because the receiver `taha` has a pre-approval, transfers
+settle in **one step** (`transferKind = direct`).
 
 ```bash
 python cn.py transfer eyad taha 12
+python cn.py transfer eyad taha 10
 ```
 
-**Result — settled on ledger:**
+**Results — settled on ledger:**
 
-| Field | Value |
-|---|---|
-| Sender | `eyad::1220e0b96d…209258ae` |
-| Receiver | `taha::12208869ea…0d0d0965` |
-| Amount | **12.0000000000 CC** |
-| Transfer kind | `direct` (one-step, pre-approved) |
-| **Update ID** | `122025afc353a282cc05cd9e2f4388d144fb9b74a9dc222ebd934a17d53c161d6965` |
-| Completion offset | `2182750` |
-| Factory ID | `009f00e5bf00…72072381` |
+| Sender | Receiver | Amount | Kind | Update ID |
+|---|---|---|---|---|
+| `eyad` | `taha` | **12.0000000000 CC** | `direct` | `122025afc353a282cc05cd9e2f4388d144fb9b74a9dc222ebd934a17d53c161d6965` |
+| `eyad` | `taha` | **10.0000000000 CC** | `direct` | `12206b2643fb22cd0024211c036bc70de9c629ef1cd73c9cd3eb2a2790d1cac51515` |
 
-A second outbound transfer was also performed (same `direct` Token Standard flow):
+Full transfer records: [`evidence/eyad.party.json`](evidence/eyad.party.json) (`transfers_out`).
 
-| Sender | Receiver | Amount | Update ID |
-|---|---|---|---|
-| `eyad` | `taha` | **10.0000000000 CC** | `12206b2643fb22cd0024211c036bc70de9c629ef1cd73c9cd3eb2a2790d1cac51515` |
+---
 
-Full transfer record (both transfers): [`evidence/eyad.party.json`](evidence/eyad.party.json) (`transfers_out`).
+## How to verify on-ledger
+
+This is a permissioned network with **no public block explorer**, so
+independent verification requires validator API credentials (the hackathon
+`CANTON_CLIENT_SECRET`). With them, any `updateId` quoted above can be fetched
+directly from the ledger:
+
+```bash
+python cn.py verify 12206b2643fb22cd0024211c036bc70de9c629ef1cd73c9cd3eb2a2790d1cac51515
+```
+
+`verify` prints the committed transaction's `commandId`, effective time,
+offset, synchronizer and event count. You can also re-derive the live balance
+and preapproval straight from the Active Contract Set:
+
+```bash
+python cn.py acs  eyad    # holdings + balance + preapproval
+python cn.py show eyad    # full persisted record (PartyId, topology txs, transfers)
+```
 
 ---
 
@@ -155,13 +179,38 @@ pip install -r requirements.txt
 
 export CANTON_CLIENT_SECRET=<hackathon-client-secret>   # see .env.example
 
-python cn.py allocate    eyad         # Step 1
-python cn.py preapproval eyad         # Step 2
+python cn.py allocate    eyad           # Step 1
+python cn.py preapproval eyad           # Step 2
 # Step 3: receive coins (team faucet, or a transfer from a funded party)
-python cn.py acs         eyad         # Step 4
-python cn.py transfer    eyad taha 12 # Step 5
-python cn.py show        eyad         # full persisted state
+python cn.py acs         eyad           # Step 4
+python cn.py transfer    eyad taha 12   # Step 5
+python cn.py show        eyad           # full persisted state
 ```
+
+### Prerequisites & caveats
+
+- **Python 3.9+** plus the two dependencies in `requirements.txt`.
+- **Validator credentials are required.** `cn.py` authenticates with the
+  hackathon OAuth client; set `CANTON_CLIENT_SECRET` first or it exits with a
+  clear error. The secret is deliberately never committed.
+- **Counterparties must exist locally.** A `transfer eyad taha …` reads the
+  receiver's PartyId from a local `state/taha.json`. This repo ships only
+  `eyad`'s *sanitized* evidence (no keys), so to re-run a transfer you must
+  first allocate the counterparty in your own `state/` (or point the command at
+  a PartyId you control). The committed evidence already proves the original
+  runs.
+
+---
+
+## Parties in this exercise
+
+The three parties transacted with each other; each has its own repo.
+
+| Party | PartyId | Repo |
+|---|---|---|
+| **eyad** (this repo) | `eyad::1220e0b96deef56097f261037f8628622e481712cd7379214e72bee2ab1a209258ae` | — |
+| ayaan | `ayaan::122089701248fdb863092188c3af86ef450ea1487974496d6fa8494d6c3361cf3a5d` | https://github.com/ayaansyed0302-pixel/Canton.ayaan |
+| taha | `taha::12208869ea8833eac587d55e5cbf32a46664ef152cc0ecd35a64dc5fd5a90d0d0965` | https://github.com/TahaKhanM/canton-hackathon |
 
 ## Network coordinates (DevNet, C8 / Cantor8 validator)
 
@@ -170,16 +219,16 @@ python cn.py show        eyad         # full persisted state
 | IDP (Keycloak) | `https://auth.dev.digik.cantor8.tech` |
 | Validator Admin API | `https://api.validator.dev.digik.cantor8.tech/api/validator` |
 | Ledger API | `https://api.validator.dev.digik.cantor8.tech/api/ledger` |
-| DSO party | `DSO::1220be58c2…81bb471a` |
-| Provider (validator operator) | `cantor8-digik-1::12204e94…d77f` |
-| Synchronizer | `global-domain::1220be58c2…81bb471a` |
+| DSO party | `DSO::1220be58c29e65de40bf273be1dc2b266d43a9a002ea5b18955aeef7aac881bb471a` |
+| Provider (validator operator) | `cantor8-digik-1::12204e94c0e449c0efcd270dd1e68259c36471cebef132e5c7dfc2750fe8c9eed77f` |
+| Synchronizer | `global-domain::1220be58c29e65de40bf273be1dc2b266d43a9a002ea5b18955aeef7aac881bb471a` |
 
 ## Files
 
 | Path | Purpose |
 |---|---|
-| [`cn.py`](cn.py) | Full automation CLI for all 5 lab steps |
-| [`evidence/eyad.party.json`](evidence/eyad.party.json) | Sanitized party state (PartyId, pubkey, topology txs, preapproval, funding, transfer) — **no private key** |
+| [`cn.py`](cn.py) | Full automation CLI for all 5 lab steps (`allocate`, `preapproval`, `acs`, `transfer`, `verify`, `show`). Shared verbatim across all three party repos. |
+| [`evidence/eyad.party.json`](evidence/eyad.party.json) | Sanitized party state (PartyId, pubkey, topology txs, preapproval, funding, transfers) — **no private key** |
 | [`evidence/eyad.acs-snapshot.json`](evidence/eyad.acs-snapshot.json) | Live ACS snapshot: holdings, balance, preapproval |
 | [`requirements.txt`](requirements.txt) | Python dependencies |
 | [`.env.example`](.env.example) | Template for the required `CANTON_CLIENT_SECRET` |

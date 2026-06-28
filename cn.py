@@ -487,10 +487,57 @@ def cmd_transfer(from_name, to_name, amount):
     return record
 
 
+# ---------------------------------------------------------------------------
+# Independent verification: look up any update (transaction) by its updateId
+# ---------------------------------------------------------------------------
+def cmd_verify(update_id):
+    """Fetch a committed update by its updateId and print a concise summary.
+
+    Lets a reviewer confirm that an updateId quoted in the docs/evidence is a
+    real, committed ledger transaction (requires validator API credentials —
+    this is a permissioned network with no public block explorer).
+    """
+    body = {
+        "updateId": update_id,
+        "updateFormat": {
+            "includeTransactions": {
+                "eventFormat": {
+                    "filtersByParty": {},
+                    "filtersForAnyParty": {"cumulative": [
+                        {"identifierFilter": {"WildcardFilter": {"value": {"includeCreatedEventBlob": False}}}}
+                    ]},
+                    "verbose": False,
+                },
+                "transactionShape": "TRANSACTION_SHAPE_ACS_DELTA",
+            }
+        },
+    }
+    r = requests.post(
+        f"{LEDGER_BASE}/v2/updates/update-by-id",
+        headers=auth_headers(), json=body, timeout=60,
+    )
+    if r.status_code >= 400:
+        print(f"NOT FOUND ({r.status_code}): {r.text[:200]}")
+        sys.exit(1)
+    tx = r.json().get("update", {}).get("Transaction", {}).get("value", {})
+    if not tx:
+        print(f"No transaction found for updateId={update_id}")
+        sys.exit(1)
+    events = tx.get("events", [])
+    print(f"VERIFIED updateId={tx.get('updateId')}")
+    print(f"  commandId    = {tx.get('commandId')}")
+    print(f"  effectiveAt  = {tx.get('effectiveAt')}")
+    print(f"  offset       = {tx.get('offset')}")
+    print(f"  synchronizer = {tx.get('synchronizerId')}")
+    print(f"  events       = {len(events)} (created/archived nodes)")
+    return tx
+
+
 def main():
     if len(sys.argv) < 2:
         print("usage: cn.py <command> [args]")
-        print("commands: token | allocate <name> | show <name>")
+        print("commands: token | allocate <name> | preapproval <name> | acs <name> |")
+        print("          transfer <from> <to> <amount> | verify <updateId> | show <name>")
         sys.exit(2)
     cmd = sys.argv[1]
     if cmd == "token":
@@ -503,6 +550,8 @@ def main():
         cmd_acs(sys.argv[2])
     elif cmd == "transfer":
         cmd_transfer(sys.argv[2], sys.argv[3], sys.argv[4])
+    elif cmd == "verify":
+        cmd_verify(sys.argv[2])
     elif cmd == "show":
         print(json.dumps(load_party(sys.argv[2]), indent=2))
     else:
